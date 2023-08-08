@@ -10,8 +10,8 @@ The following rules apply in an international javelin throwing competition:
 - In the final throws, athletes are ranked before each round according to their best ranking up to that round and the throws start from the athlete with the worst ranking to the athlete with the best ranking.
 - After the final throws are completed, gold, silver and bronze medals are awarded to the first 3 ranked competitors.
 
-**Playing the Game**
+**Running the Game**
 
-To run the game, you just need to download the zip file from Releases and run the exe file inside.
+To run the game, you just need to download the zip file from Releases and run the exe file in the Console.
 
 **ENJOY THE GAME!**

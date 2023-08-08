@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define STR_LIMIT 100
 
@@ -16,19 +17,18 @@ int main() {
         if (numberOfPlayers <= 0)
             printf("Invalid number!\n");
         else if (numberOfPlayers < 8)
-            printf("In the competition, there must at least 8 players!\n");
+            printf("In the competition, there must be at least 8 players!\n");
     } while (numberOfPlayers < 8);
 
-    playerNames = (char **) malloc (sizeof (char *) * numberOfPlayers + 1);
-    distances = (int *) malloc (sizeof (int) * numberOfPlayers + 1);
+    playerNames = (char **) malloc(sizeof(char *) * (numberOfPlayers + 1));
+    distances = (int *) malloc(sizeof(int) * (numberOfPlayers + 1));
 
+    fflush(stdin);
     printf("\n");
     for (size_t i = 0; i < numberOfPlayers; i++) {
-        playerNames[i] = (char *) malloc (sizeof (char) * STR_LIMIT);
+        playerNames[i] = (char *) malloc(sizeof(char) * STR_LIMIT);
         printf("Enter the player %zu name-surname: ", i + 1);
-
-        if (i == 0) gets(playerNames[0]); // for preventing gets function bug
-        gets(playerNames[i]);
+        scanf(" %[^\n]", playerNames[i]);
     }
 
     printf("\nFirst Round\n-----------");
@@ -36,7 +36,7 @@ int main() {
         printf("\n");
         for (size_t i = 0; i < numberOfPlayers; i++) {
             int distance;
-            printf("Enter player %zu 's %zu. try: ", i + 1, j + 1);
+            printf("Enter player %zu's %zu. try: ", i + 1, j + 1);
             scanf("%d", &distance);
 
             if (j == 0)
@@ -48,6 +48,7 @@ int main() {
         }
     }
 
+    distances[numberOfPlayers] = -1;
     sortAthletes(&playerNames, &distances);
 
     int numberOfFinalPlayers = 0;
@@ -57,19 +58,19 @@ int main() {
             numberOfFinalPlayers++;
     }
 
-    for (size_t i = numberOfFinalPlayers; i < numberOfPlayers; i++)
-        playerNames[i] = NULL;
+    playerNames = (char **) realloc(playerNames, sizeof(char *) * (numberOfFinalPlayers + 1));
+    distances = (int *) realloc(distances, sizeof(int) * (numberOfFinalPlayers + 1));
 
-    printf("\nFinal players:\n--------------");
+    printf("\nFinal players     Distance\n-------------     --------");
     for (size_t i = 0; i < numberOfFinalPlayers; i++)
-        printf("\n%s    %d", playerNames[i], distances[i]);
+        printf("\n%s           %d", playerNames[i], distances[i]);
 
     printf("\n\nFinal Round\n-----------");
     for (size_t j = 0; j < 3; j++) { // Final round
         printf("\n");
         for (int i = numberOfFinalPlayers - 1; i >= 0; i--) {
             int distance;
-            printf("Enter player %d 's %zu. try: ", numberOfPlayers - i - 1, j + 1);
+            printf("Enter player %d's %zu. try: ", numberOfFinalPlayers - i, j + 1);
             scanf("%d", &distance);
 
             if (j == 0)
@@ -81,11 +82,13 @@ int main() {
         }
     }
 
+    distances[numberOfFinalPlayers] = -1;
     sortAthletes(&playerNames, &distances);
 
-    printf("\nAthletes who won gold, silver and bronze medals, respectively: \n");
+    printf("\nAthletes who won gold, silver, and bronze medals, respectively: \n\n");
+    printf("\n WINNERS           Distance\n*********          ********");
     for (size_t i = 0; i < 3; i++)
-        printf("\n%s    %d", playerNames[i], distances[i]);
+        printf("\n%s            %d", playerNames[i], distances[i]);
 
     printf("\n");
 
@@ -101,7 +104,7 @@ int main() {
 
 void sortAthletes(char ***players, int **distances) {
     size_t length = 0;
-    while ((*players)[length] != NULL) length++;
+    while ((*distances)[length] != -1) length++;
 
     for (size_t i = 0; i < length - 1; i++) { // Selection sort
         int biggestDistance = (*distances)[i];
@@ -116,8 +119,8 @@ void sortAthletes(char ***players, int **distances) {
         (*distances)[i] = (*distances)[biggestIndex];
         (*distances)[biggestIndex] = tempDistance;
 
-        char **tempNames = (char **) (*players)[i];
+        char *tempPlayer = (*players)[i];
         (*players)[i] = (*players)[biggestIndex];
-        (*players)[biggestIndex] = (char *) tempNames;
+        (*players)[biggestIndex] = tempPlayer;
     }
 }
